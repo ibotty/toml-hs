@@ -75,10 +75,17 @@ tDatetime = parserFromReads $ readsTime defaultTimeLocale "%FT%XZ"
 
 -- note: trim accepts newline, so this is ok
 tArray :: Parser [TValue]
-tArray = char '[' *> spaces' *> choice parsers <* spaces' <* char ']'
+tArray = char '[' *> spaces' *> choice parsers <* char ']'
     where prepParser :: Parser TValue -> Parser [TValue]
           prepParser parser = trim parser  `sepBy1` char ','
           parsers = map prepParser constructor_parsers
+
+--tArray = choice parsers
+--    where outer :: Parser TValue -> Parser [TValue]
+--          outer val = char '[' *> spaces' *> inner val <* spaces' <* char ']'
+--          inner :: Parser TValue -> Parser [TValue]
+--          inner val = trim val  `sepBy` char ','
+--          parsers = map outer constructor_parsers
 
 
 tValue :: Parser TValue
